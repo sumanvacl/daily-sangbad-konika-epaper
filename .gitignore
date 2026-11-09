@@ -1,0 +1,26 @@
+# Credentials and configuration
+.env
+.env.*
+*.sql
+*config*
+*database*
+
+# Logs and temporary files
+*.log
+error_log
+*.tmp
+*.bak
+*~
+
+# Production content
+data/
+uploads/
+cache/
+sessions/
+
+# Generated publication files
+title.php
+
+# Operating system files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edition>
+    <news_01_100>
+        <pub_id></pub_id>
+        <cat_id></cat_id>
+        <menu_id></menu_id>
+        <news_id></news_id>
+        <title></title>
+        <image01>01_100.jpg</image01>
+        <image02>01_101.jpg</image02>
+    </news_01_100>
+    <news_02_200>
+        <pub_id></pub_id>
+        <cat_id></cat_id>
+        <menu_id></menu_id>
+        <news_id></news_id>
+        <title></title>
+        <image01>02_200.jpg</image01>
+        <image02></image02>
+    </news_02_200>
+</edition>

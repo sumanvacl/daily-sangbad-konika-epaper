@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<high>
+    <light>
+        <image>01_100</image>
+        <x>14</x>
+        <y>66</y>
+        <w>51</w>
+        <h>66</h>
+    </light>
+    <light>
+        <image>02_200</image>
+        <x>120</x>
+        <y>80</y>
+        <w>90</w>
+        <h>55</h>
+    </light>
+</high>
