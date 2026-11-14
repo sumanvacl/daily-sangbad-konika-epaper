@@ -143,3 +143,12 @@ WordPress account auditing, database cleanup, Apache log correlation,
 Linux evidence preservation and endpoint quarantine.
 
 See [Production Security Incident Investigation and Response](docs/security-review.md#production-security-incident-investigation-and-response).
+
+## Forensic Security Samples
+
+The repository includes a separate [forensic sample directory](examples/forensic-samples/)
+documenting an unauthorized PHP backdoor discovered during a production
+WordPress security investigation.
+
+The specimen is deliberately non-executable. Original incident evidence
+is preserved privately and is not distributed in this repository.

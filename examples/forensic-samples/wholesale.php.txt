@@ -1,0 +1,62 @@
+=======================================================================
+SANITIZED FORENSIC SPECIMEN — NOT EXECUTABLE PHP
+=======================================================================
+
+Original filename: wholesale.php
+Original type: Unauthorized PHP backdoor
+Original SHA-256:
+8430f6319cb73a9c4b3abd62f900cba48cad6587ad32d486d37737418ff39f83
+
+IMPORTANT:
+This is a textual reconstruction for security education.
+It deliberately contains no executable PHP, payload decoder,
+temporary-file creation, include operation, or command execution.
+
+-----------------------------------------------------------------------
+OBSERVED LOGIC IN THE ORIGINAL FILE
+-----------------------------------------------------------------------
+
+1. INPUT
+   The original script accepted a POST parameter named "value".
+
+2. DECODING
+   The supplied value was hex-decoded.
+
+3. XOR TRANSFORMATION
+   The decoded bytes were transformed using XOR with the integer key 2.
+
+4. TEMPORARY FILE
+   The transformed data was written to a temporary file with a ".data"
+   suffix.
+
+5. DYNAMIC EXECUTION
+   The original script included the temporary file as PHP code.
+
+6. CLEANUP
+   The temporary file was unlinked and the script terminated.
+
+-----------------------------------------------------------------------
+NON-EXECUTABLE PSEUDOCODE
+-----------------------------------------------------------------------
+
+IF a POST request contains parameter "value":
+    decode the supplied hexadecimal data
+    transform decoded bytes using XOR key 2
+    write transformed data to a temporary file
+    execute the temporary file as PHP
+    delete the temporary file
+    terminate the request
+
+-----------------------------------------------------------------------
+SECURITY INTERPRETATION
+-----------------------------------------------------------------------
+
+The dangerous behavior was dynamic execution of attacker-controlled data.
+
+The temporary file's deletion did not make the operation safe. The payload
+could execute before the temporary file was removed.
+
+The endpoint could therefore provide remote PHP code execution if an
+attacker could reach it and supply suitable input.
+
+This specimen intentionally does not reproduce the operational code.

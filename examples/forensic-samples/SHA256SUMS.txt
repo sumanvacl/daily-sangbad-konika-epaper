@@ -1,0 +1,5 @@
+# SHA-256 of the original quarantined incident specimen.
+# This hash identifies the original evidence; it is not the hash of
+# wholesale.php.txt in this repository.
+
+8430f6319cb73a9c4b3abd62f900cba48cad6587ad32d486d37737418ff39f83  original-wholesale.php
