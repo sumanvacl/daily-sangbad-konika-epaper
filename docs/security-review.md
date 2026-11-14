@@ -107,3 +107,54 @@ Preliminary static source review only.
 
 The application should not be described as security-audited,
 production-hardened, or fully secure on the basis of this review.
+
+---
+
+## Production Security Incident Investigation and Response
+
+In November 2026, I conducted a practical security investigation involving
+the production WordPress environment associated with the newspaper platform.
+
+### Investigation findings
+
+- Identified two unauthorized PHP files inside third-party plugin vendor
+  directories. Static analysis revealed mechanisms capable of executing
+  externally supplied PHP payloads.
+- Audited suspicious WordPress administrator accounts and application
+  passwords, comparing account activity with Apache access logs.
+- Investigated hidden SEO spam stored in a custom WordPress database option.
+- Traced the database option to a custom PHP endpoint that supported
+  homepage placement management and other remote operations.
+- Examined endpoint capabilities involving post creation, application
+  passwords, runtime PHP deployment and update operations.
+
+### Containment and evidence preservation
+
+- Preserved the original suspicious PHP files outside the public web root.
+- Recorded SHA-256 hashes to verify the integrity of preserved evidence.
+- Removed the identified malicious database option and identified spam posts.
+- Quarantined the custom PHP endpoint outside the public web directory.
+- Searched the database for the known spam-domain indicators.
+
+### Problem-solving skills demonstrated
+
+- PHP source-code analysis and request-handler tracing.
+- WordPress administrator and application-password auditing.
+- Apache access-log analysis and timestamp correlation.
+- Database investigation using WP-CLI.
+- Linux filesystem inspection, file permissions and ownership management.
+- Evidence preservation, hash verification and incident containment.
+
+### Investigation limitations
+
+The observed timing correlations do not independently prove the exact
+initial access method or identify the responsible actor. The investigation
+does not constitute a complete forensic audit or certify that all
+persistence mechanisms have been eliminated. Additional verification
+and credential security measures remain necessary.
+
+This incident response work demonstrates practical troubleshooting,
+analytical reasoning and production server administration. It is
+documented separately from the E-Paper application's historical
+source-code review.
+

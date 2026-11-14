@@ -135,3 +135,11 @@ This repository presents the historical PHP application and its
 architecture as a portfolio project. It is not a claim that the
 legacy application is actively maintained or ready for a fresh
 production deployment.
+
+## Security Incident Response
+
+Practical production incident investigation involving PHP backdoor analysis,
+WordPress account auditing, database cleanup, Apache log correlation,
+Linux evidence preservation and endpoint quarantine.
+
+See [Production Security Incident Investigation and Response](docs/security-review.md#production-security-incident-investigation-and-response).
