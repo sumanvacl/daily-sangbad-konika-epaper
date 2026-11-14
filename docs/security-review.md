@@ -471,3 +471,243 @@ not be represented as a completed independent forensic audit,
 penetration test or certification that the production environment
 is completely clean.
 
+
+## Attack Mitigation, Containment and Recovery Strategy
+
+This section documents the practical response to unauthorized PHP code,
+suspicious WordPress account activity, and injected SEO content discovered
+during the production security investigation.
+
+The response followed a defensive incident-handling sequence:
+detection, evidence preservation, containment, investigation, remediation,
+hardening, and verification.
+
+### 1. Detection and initial investigation
+
+Unexpected PHP files were identified inside third-party plugin vendor
+directories. Their source code was inspected statically rather than
+executed on the production server.
+
+The investigation identified two unauthorized PHP files:
+
+- `wholesale.php` inside the Google Site Kit phpseclib vendor directory.
+- `UnderThesisProj.php` inside the WP Smush phpseclib vendor directory.
+
+Both files contained logic consistent with decoding attacker-controlled
+input, writing a temporary PHP payload, and executing it.
+
+The investigation also identified a custom EasyPost endpoint with
+capabilities to modify WordPress data and deploy runtime PHP code.
+Its observed use and associated hidden SEO placements required separate
+investigation.
+
+### 2. Evidence preservation
+
+Before removing public access, original suspicious files were preserved
+outside the public web root.
+
+The evidence-handling process included:
+
+- Copying and quarantining suspicious files.
+- Recording SHA-256 hashes.
+- Comparing preserved copies to confirm matching content.
+- Recording file metadata and original locations.
+- Restricting evidence access to the root account.
+
+Evidence was retained under:
+
+`/root/incident-evidence/`
+
+The original files were not included in this public repository because
+they contain operationally dangerous code.
+
+### 3. Containment of unauthorized PHP backdoors
+
+The two suspicious vendor-directory PHP files were moved out of their
+publicly accessible locations and preserved in the incident evidence
+directory.
+
+The public paths were checked after quarantine and the original public
+files were confirmed absent.
+
+This action prevented subsequent HTTP requests from reaching those
+specific files through their original public paths.
+
+It does not, by itself, establish that all other persistence mechanisms
+or copies were eliminated.
+
+### 4. Containment of the custom EasyPost endpoint
+
+The custom endpoint:
+
+`wp-content/easypost/easypost.php`
+
+was preserved and quarantined outside the public web root.
+
+The original and quarantined copies were checked against the same
+SHA-256 hash:
+
+`b148969148247340ba18c289de0cf6ba5214b28f0af85564f2100de9ff14dec8`
+
+The public endpoint path was confirmed absent after quarantine.
+
+Access logs showed requests involving actions such as
+`place_homepage_link`, `health`, `begin_reconcile`,
+`reconcile_portfolio_admin`, `finish_reconcile`, and `create_post`.
+
+These log entries establish endpoint activity and HTTP responses.
+They do not independently establish the exact effect of every request
+or identify the operator.
+
+### 5. Removal of injected SEO content
+
+The investigation found hidden homepage placements containing
+unrelated gambling SEO links and multilingual spam content.
+
+The associated WordPress option was exported to incident evidence
+before removal.
+
+The suspicious option was subsequently deleted.
+
+Two posts containing known spam-domain references were investigated.
+Both post IDs were subsequently confirmed absent using WordPress post
+lookups.
+
+A later database search for the known spam domains returned no matches
+in the searchable WordPress database content.
+
+This is evidence of cleanup for the identified content. It is not
+proof that every possible malicious database entry was removed.
+
+### 6. Investigation of unauthorized administrator accounts
+
+Suspicious administrator accounts were identified and compared with
+HTTP access-log activity.
+
+The investigation recorded account identifiers, usernames, email
+addresses, application-password metadata, timestamps, and associated
+request IP information.
+
+Repeated requests to the quarantined backdoor paths were correlated
+with suspicious account creation timestamps.
+
+Timestamp correlation is an investigative lead, not conclusive proof
+that a particular request created a particular account.
+
+Account removal or demotion, application-password revocation, session
+invalidation, and credential rotation must each be independently
+verified before being reported as completed.
+
+### 7. Recovery and security hardening
+
+The following controls form the recovery and hardening plan:
+
+- Review every WordPress administrator and privileged account.
+- Remove or demote unauthorized accounts after preserving relevant
+  evidence.
+- Revoke unknown WordPress application passwords.
+- Reset credentials for potentially exposed administrative accounts.
+- Invalidate existing sessions where compromise is suspected.
+- Review WordPress authentication, registration, REST API, and XML-RPC
+  exposure.
+- Audit must-use plugins, custom endpoints, plugin directories, and
+  unexpected PHP files.
+- Review PHP files and scheduled tasks for persistence mechanisms.
+- Restrict write permissions on application code and plugin directories.
+- Review web-server access controls and PHP execution permissions.
+- Apply appropriate Cloudflare WAF protections and verify their effect.
+- Monitor access logs, account creation, file changes, and suspicious
+  requests for recurrence.
+- Reassess third-party plugins and restore affected components from
+  trusted sources when integrity cannot be established.
+
+These are recovery requirements, not claims that every control has
+already been implemented.
+
+### 8. Verification methodology
+
+Each remediation action should have a corresponding verification step.
+
+Examples:
+
+- Confirm quarantined public paths return no accessible PHP resource.
+- Compare evidence hashes to establish that preserved originals were
+  not altered.
+- Query WordPress users to verify the current administrator inventory.
+- Inspect application-password records to verify revocation.
+- Review active sessions and authentication logs.
+- Search database content for known injected domains and placement data.
+- Inspect recently modified PHP files and unexpected executable files.
+- Review scheduled tasks, must-use plugins, and other persistence
+  locations.
+- Confirm firewall rules are active and inspect subsequent request logs.
+- Continue monitoring for recreated accounts, files, and endpoints.
+
+A successful individual check supports only the specific condition
+that it tested. A complete recovery assessment requires the relevant
+checks to be completed together.
+
+## Verified Remediation vs. Outstanding Security Checks
+
+This section deliberately separates actions supported by investigation
+evidence from work that still requires verification.
+
+### Verified remediation and investigation outcomes
+
+The following actions were completed and supported by recorded evidence:
+
+| Item | Verified outcome |
+|---|---|
+| Unauthorized `wholesale.php` | Preserved, hash recorded, and quarantined outside the public web root |
+| Unauthorized `UnderThesisProj.php` | Preserved, hash recorded, and quarantined outside the public web root |
+| Public backdoor paths | Confirmed absent after quarantine |
+| Custom EasyPost endpoint | Preserved, hash recorded, and quarantined outside the public web root |
+| Hidden SEO placement option | Exported to evidence and deleted from WordPress |
+| Identified spam posts | Both investigated post IDs subsequently confirmed absent |
+| Known spam-domain search | No matches returned in the later searchable database-content search |
+| Forensic evidence | Original suspicious files and supporting evidence preserved outside the public web root |
+
+### Outstanding security checks
+
+The following items must not be described as completed until their results
+have been collected and reviewed:
+
+| Check | Required verification |
+|---|---|
+| Remaining PHP files | Review recently modified and unexpected PHP files across the application |
+| EasyPost runtime MU-plugin | Determine whether `easypost-runtime.php` or related runtime code remains necessary, legitimate, and safe |
+| Administrator accounts | Verify the current administrator inventory and resolve suspicious accounts |
+| Application passwords | Verify unknown or potentially compromised application passwords have been revoked |
+| Credentials and sessions | Verify relevant credential rotation and session invalidation |
+| Cloudflare protection | Confirm intended WAF rules are active and subsequent traffic is handled as expected |
+| Persistence mechanisms | Review scheduled tasks, MU-plugins, drop-ins, custom endpoints, and other persistence locations |
+| File integrity | Compare affected WordPress core and plugin files with trusted distributions |
+| Recurrence monitoring | Review subsequent logs and file changes for recreated accounts, backdoors, or injected content |
+
+### Recovery status and limitations
+
+The investigation established and remediated several specific unauthorized
+files, endpoint exposures, and identified injected content.
+
+However, the outstanding checks above mean that a complete production
+security recovery has not yet been demonstrated.
+
+The findings should therefore be presented as a documented production
+incident-response exercise with verified containment and cleanup actions,
+alongside an explicit list of remaining verification work.
+
+No claim of complete eradication, full system integrity, or absence of
+persistence should be made until the corresponding checks have been
+completed and documented.
+
+### Additional containment limitation
+
+Quarantining the identified backdoors and custom endpoint removed access
+through their original public paths. It did not independently revoke
+attacker credentials, invalidate existing sessions, establish that all
+attacker access had ended, or prove that no additional persistence existed.
+
+The separate `easypost-runtime.php` MU-plugin remained subject to
+investigation at the time this report was prepared. Its presence must not
+be interpreted as proof of malicious behavior, but its origin, purpose,
+dependencies, and safety require verification.
