@@ -158,3 +158,52 @@ analytical reasoning and production server administration. It is
 documented separately from the E-Paper application's historical
 source-code review.
 
+
+---
+
+## Remediation and Verification Status
+
+**Status recorded:** 14 November 2026
+
+### Completed and verified
+
+- Two unauthorized PHP backdoor files were removed from their original
+  public locations and preserved in a protected evidence directory.
+- SHA-256 checksums confirmed the integrity of the preserved backdoor copies.
+- The identified malicious homepage-placement database option was deleted.
+- The two identified spam post IDs were confirmed absent after deletion.
+- Searches for the known spam-domain indicators returned no matches in
+  the searchable WordPress database content.
+- The custom EasyPost PHP endpoint was removed from its public location
+  and quarantined.
+- SHA-256 checksums confirmed the integrity of the preserved endpoint copies.
+
+### Outstanding verification
+
+The following areas require further investigation or confirmation:
+
+- Inspect recently modified PHP files and determine whether additional
+  runtime files were deployed by the custom endpoint.
+- Review the remaining EasyPost runtime MU-plugin and its dependencies.
+- Audit all administrator accounts and application passwords, including
+  suspicious accounts and any recreated accounts.
+- Confirm that unauthorized application passwords and login sessions
+  have been revoked.
+- Confirm rotation of WordPress, database, hosting and other potentially
+  exposed credentials.
+- Review Cloudflare security rules and verify that appropriate protections
+  are active.
+- Perform a broader persistence review before declaring the environment clean.
+
+### Security conclusion
+
+The actions above represent verified containment of specific identified
+malicious files, database content and a custom PHP endpoint.
+
+They do not establish the complete initial access method, prove that all
+unauthorized access has stopped, or certify that the production server
+is free of additional persistence mechanisms.
+
+The incident remains under investigation until the outstanding checks
+have been completed and verified.
+
