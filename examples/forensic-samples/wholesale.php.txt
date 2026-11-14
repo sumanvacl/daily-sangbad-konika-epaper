@@ -1,62 +1,210 @@
-=======================================================================
-SANITIZED FORENSIC SPECIMEN — NOT EXECUTABLE PHP
-=======================================================================
+<?php
+/**
+ * =====================================================================
+ * SANITIZED FORENSIC RECONSTRUCTION — NOT THE ORIGINAL MALWARE
+ * =====================================================================
+ *
+ * Original filename: wholesale.php
+ * Original type: Unauthorized PHP payload loader / backdoor
+ *
+ * Original SHA-256:
+ * 8430f6319cb73a9c4b3abd62f900cba48cad6587ad32d486d37737418ff39f83
+ *
+ * IMPORTANT:
+ * This is an annotated reconstruction of the observed attack structure.
+ * It is NOT a verbatim copy of the original source.
+ *
+ * Dangerous operations have intentionally been replaced with comments.
+ * This specimen must not be deployed as a PHP endpoint.
+ */
 
-Original filename: wholesale.php
-Original type: Unauthorized PHP backdoor
-Original SHA-256:
-8430f6319cb73a9c4b3abd62f900cba48cad6587ad32d486d37737418ff39f83
 
-IMPORTANT:
-This is a textual reconstruction for security education.
-It deliberately contains no executable PHP, payload decoder,
-temporary-file creation, include operation, or command execution.
+/*
+ * STAGE 1 — REQUEST INPUT
+ * -----------------------
+ *
+ * OBSERVED:
+ * The original script accepted a POST parameter named "value".
+ *
+ * ATTACK SIGNIFICANCE:
+ * The request supplied data that was subsequently transformed into
+ * a PHP payload.
+ *
+ * ORIGINAL INPUT:
+ *     $_POST['value']
+ *
+ * Sanitized representation:
+ */
 
------------------------------------------------------------------------
-OBSERVED LOGIC IN THE ORIGINAL FILE
------------------------------------------------------------------------
+// $submitted_value = $_POST['value'];  // Original input operation
 
-1. INPUT
-   The original script accepted a POST parameter named "value".
 
-2. DECODING
-   The supplied value was hex-decoded.
+/*
+ * STAGE 2 — HEXADECIMAL DECODING
+ * -----------------------------
+ *
+ * OBSERVED:
+ * The supplied value was hexadecimal-decoded.
+ *
+ * ATTACK SIGNIFICANCE:
+ * Hex encoding concealed the payload representation in the HTTP request.
+ *
+ * ORIGINAL TRANSFORMATION:
+ *     hexadecimal input -> decoded bytes
+ *
+ * Sanitized representation:
+ */
 
-3. XOR TRANSFORMATION
-   The decoded bytes were transformed using XOR with the integer key 2.
+// $decoded_data = hex2bin($submitted_value);
 
-4. TEMPORARY FILE
-   The transformed data was written to a temporary file with a ".data"
-   suffix.
 
-5. DYNAMIC EXECUTION
-   The original script included the temporary file as PHP code.
+/*
+ * STAGE 3 — XOR TRANSFORMATION
+ * ----------------------------
+ *
+ * OBSERVED:
+ * The decoded bytes were transformed using XOR with integer key 2.
+ *
+ * ATTACK SIGNIFICANCE:
+ * This additional transformation concealed the final payload from
+ * straightforward inspection of the supplied request data.
+ *
+ * ORIGINAL TRANSFORMATION:
+ *     decoded bytes -> XOR transformation (key 2) -> transformed payload
+ *
+ * Sanitized representation:
+ */
 
-6. CLEANUP
-   The temporary file was unlinked and the script terminated.
+// $transformed_payload = [XOR transformation with key 2];
 
------------------------------------------------------------------------
-NON-EXECUTABLE PSEUDOCODE
------------------------------------------------------------------------
 
-IF a POST request contains parameter "value":
-    decode the supplied hexadecimal data
-    transform decoded bytes using XOR key 2
-    write transformed data to a temporary file
-    execute the temporary file as PHP
-    delete the temporary file
-    terminate the request
+/*
+ * STAGE 4 — TEMPORARY FILE CONSTRUCTION
+ * -------------------------------------
+ *
+ * OBSERVED:
+ * The original script constructed a temporary filename ending in ".data".
+ *
+ * ATTACK SIGNIFICANCE:
+ * The transformed payload was prepared for execution through a temporary
+ * file rather than being handled as ordinary application data.
+ *
+ * Sanitized representation:
+ */
 
------------------------------------------------------------------------
-SECURITY INTERPRETATION
------------------------------------------------------------------------
+// $temporary_file = [temporary filename ending in ".data"];
 
-The dangerous behavior was dynamic execution of attacker-controlled data.
 
-The temporary file's deletion did not make the operation safe. The payload
-could execute before the temporary file was removed.
+/*
+ * STAGE 5 — PAYLOAD WRITE
+ * -----------------------
+ *
+ * OBSERVED:
+ * The transformed payload was written to the temporary file.
+ *
+ * ATTACK SIGNIFICANCE:
+ * This converted attacker-supplied data into a file containing PHP code.
+ *
+ * DANGEROUS ORIGINAL OPERATION:
+ *     Writing attacker-controlled PHP payload to a temporary file.
+ *
+ * REMOVED FROM THIS SPECIMEN.
+ */
 
-The endpoint could therefore provide remote PHP code execution if an
-attacker could reach it and supply suitable input.
 
-This specimen intentionally does not reproduce the operational code.
+/*
+ * STAGE 6 — DYNAMIC PHP EXECUTION
+ * -------------------------------
+ *
+ * OBSERVED:
+ * The original script included the temporary file.
+ *
+ * ATTACK SIGNIFICANCE:
+ * PHP interpreted the temporary file as executable PHP code.
+ * This is the critical remote-code-execution behavior.
+ *
+ * DANGEROUS ORIGINAL OPERATION:
+ *     Including the temporary payload file.
+ *
+ * REMOVED FROM THIS SPECIMEN.
+ */
+
+
+/*
+ * STAGE 7 — TEMPORARY FILE CLEANUP
+ * --------------------------------
+ *
+ * OBSERVED:
+ * The original script unlinked the temporary file after inclusion.
+ *
+ * ATTACK SIGNIFICANCE:
+ * Deleting the temporary file after execution could reduce the
+ * availability of an obvious payload artifact during later inspection.
+ *
+ * DANGEROUS ORIGINAL OPERATION:
+ *     Unlinking the temporary payload file.
+ *
+ * REMOVED FROM THIS SPECIMEN.
+ */
+
+
+/*
+ * STAGE 8 — REQUEST TERMINATION
+ * -----------------------------
+ *
+ * OBSERVED:
+ * The original script terminated the request after the operation.
+ *
+ * ATTACK SIGNIFICANCE:
+ * The endpoint did not need to continue normal application processing.
+ *
+ * Sanitized representation:
+ */
+
+// exit;
+
+
+/*
+ * =====================================================================
+ * COMPLETE ATTACK FLOW
+ * =====================================================================
+ *
+ * HTTP POST parameter: value
+ *          |
+ *          v
+ * Hexadecimal decoding
+ *          |
+ *          v
+ * XOR transformation (key 2)
+ *          |
+ *          v
+ * Temporary ".data" file
+ *          |
+ *          v
+ * Write transformed PHP payload
+ *          |
+ *          v
+ * Dynamic PHP inclusion / execution
+ *          |
+ *          v
+ * Delete temporary file
+ *          |
+ *          v
+ * Terminate request
+ *
+ * =====================================================================
+ * FORENSIC CONCLUSION
+ * =====================================================================
+ *
+ * The observed behavior is consistent with a PHP payload loader capable
+ * of executing attacker-controlled PHP code through an HTTP request.
+ *
+ * The critical security weakness was dynamic execution of transformed,
+ * untrusted request data.
+ *
+ * Temporary-file deletion did not undo code execution that had already
+ * occurred.
+ *
+ * This reconstruction documents the attack structure without reproducing
+ * a working payload loader.
+ */

@@ -45,3 +45,23 @@ the legitimate third-party plugin itself was responsible.
 - Do not upload original incident evidence to a public web directory.
 - Do not execute suspicious PHP files to test them on a production server.
 - Preserve original evidence and hashes before remediation.
+
+## Original Attack Structure — Sanitized Reconstruction
+
+The `wholesale.php.txt` specimen now documents the observed PHP attack
+sequence in source-code form:
+
+1. HTTP POST input through `value`.
+2. Hexadecimal decoding.
+3. XOR transformation using key 2.
+4. Temporary `.data` file construction.
+5. Payload writing.
+6. Dynamic PHP inclusion and execution.
+7. Temporary-file deletion.
+8. Request termination.
+
+The reconstruction is not the original source code. Dangerous operations
+are deliberately disabled and represented by explanatory comments.
+
+It is intended to help readers understand the attack mechanism and the
+reason the original endpoint was treated as a remote-code-execution risk.
